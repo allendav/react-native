@@ -15,11 +15,11 @@
  */
 'use strict';
 
-function getImageSource(movie: Object, kind: ?string): {uri: ?string} {
-  var uri = movie && movie.posters ? movie.posters.thumbnail : null;
-  if (uri && kind) {
-    uri = uri.replace('tmb', kind);
-  }
+function getImageSource(post: Object, kind: ?string): {uri: ?string} {
+  var uri = post && post.featured_image ? post.featured_image : null;
+  //if (uri && kind) {
+  //  uri = uri.replace('tmb', kind);
+  //}
   return { uri };
 }
 

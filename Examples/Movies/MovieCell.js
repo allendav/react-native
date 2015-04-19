@@ -31,25 +31,24 @@ var getTextFromScore = require('./getTextFromScore');
 
 var MovieCell = React.createClass({
   render: function() {
-    var criticsScore = this.props.movie.ratings.critics_score;
+    // var criticsScore = this.props.movie.ratings.critics_score;
+    console.log( this.props.post.title );
+
     return (
       <View>
         <TouchableHighlight onPress={this.props.onSelect}>
           <View style={styles.row}>
             <Image
-              source={getImageSource(this.props.movie, 'det')}
+              source={getImageSource(this.props.post, 'xxx')}
               style={styles.cellImage}
             />
             <View style={styles.textContainer}>
               <Text style={styles.movieTitle} numberOfLines={2}>
-                {this.props.movie.title}
+                {this.props.post.title}
               </Text>
               <Text style={styles.movieYear} numberOfLines={1}>
-                {this.props.movie.year}
+                {this.props.post.author.nice_name}
                 {' '}&bull;{' '}
-                <Text style={getStyleFromScore(criticsScore)}>
-                  Critics {getTextFromScore(criticsScore)}
-                </Text>
               </Text>
             </View>
           </View>

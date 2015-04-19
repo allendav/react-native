@@ -35,26 +35,19 @@ var MovieScreen = React.createClass({
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <View style={styles.mainSection}>
           <Image
-            source={getImageSource(this.props.movie, 'det')}
+            source={getImageSource(this.props.post, 'det')}
             style={styles.detailsImage}
           />
           <View style={styles.rightPane}>
-            <Text style={styles.movieTitle}>{this.props.movie.title}</Text>
-            <Text>{this.props.movie.year}</Text>
-            <View style={styles.mpaaWrapper}>
-              <Text style={styles.mpaaText}>
-                {this.props.movie.mpaa_rating}
-              </Text>
-            </View>
-            <Ratings ratings={this.props.movie.ratings} />
+            <Text style={styles.movieTitle}>{this.props.post.title}</Text>
+            <Text>{this.props.post.author.nice_name}</Text>
           </View>
         </View>
         <View style={styles.separator} />
         <Text>
-          {this.props.movie.synopsis}
+          {this.props.post.excerpt}
         </Text>
         <View style={styles.separator} />
-        <Cast actors={this.props.movie.abridged_cast} />
       </ScrollView>
     );
   },

@@ -36,11 +36,8 @@ var fetch = require('fetch');
  * In case you want to use the Rotten Tomatoes' API on a real app you should
  * create an account at http://developer.rottentomatoes.com/
  */
-var API_URL = 'http://api.rottentomatoes.com/api/public/v1.0/';
-var API_KEYS = [
-  '7waqfqbprs7pajbz28mqf6vz',
-  // 'y4vwv8m33hed9ety83jmv52f', Fallback api_key
-];
+var API_URL = 'https://public-api.wordpress.com/rest/v1.1/freshly-pressed/';
+
 
 // Results should be cached keyed by the query
 // with values of null meaning "being fetched"
@@ -76,17 +73,17 @@ var SearchScreen = React.createClass({
   },
 
   _urlForQueryAndPage: function(query: string, pageNumber: ?number): string {
-    var apiKey = API_KEYS[this.state.queryNumber % API_KEYS.length];
+    // var apiKey = API_KEYS[this.state.queryNumber % API_KEYS.length];
     if (query) {
       return (
-        API_URL + 'movies.json?apikey=' + apiKey + '&q=' +
-        encodeURIComponent(query) + '&page_limit=20&page=' + pageNumber
+        API_URL // + 'movies.json?apikey=' + apiKey + '&q=' +
+        //encodeURIComponent(query) + '&page_limit=20&page=' + pageNumber
       );
     } else {
       // With no query, load latest movies
       return (
-        API_URL + 'lists/movies/in_theaters.json?apikey=' + apiKey +
-        '&page_limit=20&page=' + pageNumber
+        API_URL // + 'lists/movies/in_theaters.json?apikey=' + apiKey +
+        // '&page_limit=20&page=' + pageNumber
       );
     }
   },
@@ -130,8 +127,8 @@ var SearchScreen = React.createClass({
       })
       .then((responseData) => {
         LOADING[query] = false;
-        resultsCache.totalForQuery[query] = responseData.total;
-        resultsCache.dataForQuery[query] = responseData.movies;
+        resultsCache.totalForQuery[query] = responseData.number; // was total
+        resultsCache.dataForQuery[query] = responseData.posts; // was movies
         resultsCache.nextPageNumberForQuery[query] = 2;
 
         if (this.state.filter !== query) {
@@ -141,7 +138,7 @@ var SearchScreen = React.createClass({
 
         this.setState({
           isLoading: false,
-          dataSource: this.getDataSource(responseData.movies),
+          dataSource: this.getDataSource(responseData.posts),
         });
       })
       .done();
@@ -190,11 +187,11 @@ var SearchScreen = React.createClass({
 
         LOADING[query] = false;
         // We reached the end of the list before the expected number of results
-        if (!responseData.movies) {
+        if (!responseData.posts) {
           resultsCache.totalForQuery[query] = moviesForQuery.length;
         } else {
-          for (var i in responseData.movies) {
-            moviesForQuery.push(responseData.movies[i]);
+          for (var i in responseData.posts) {
+            moviesForQuery.push(responseData.posts[i]);
           }
           resultsCache.dataForQuery[query] = moviesForQuery;
           resultsCache.nextPageNumberForQuery[query] += 1;
@@ -213,15 +210,15 @@ var SearchScreen = React.createClass({
       .done();
   },
 
-  getDataSource: function(movies: Array<any>): ListView.DataSource {
-    return this.state.dataSource.cloneWithRows(movies);
+  getDataSource: function(posts: Array<any>): ListView.DataSource {
+    return this.state.dataSource.cloneWithRows(posts);
   },
 
-  selectMovie: function(movie: Object) {
+  selectMovie: function(post: Object) {
     this.props.navigator.push({
-      title: movie.title,
+      title: post.title,
       component: MovieScreen,
-      passProps: {movie},
+      passProps: {post},
     });
   },
 
@@ -239,11 +236,11 @@ var SearchScreen = React.createClass({
     return <ActivityIndicatorIOS style={styles.scrollSpinner} />;
   },
 
-  renderRow: function(movie: Object)  {
+  renderRow: function(post: Object)  {
     return (
       <MovieCell
-        onSelect={() => this.selectMovie(movie)}
-        movie={movie}
+        onSelect={() => this.selectMovie(post)}
+        post={post}
       />
     );
   },
@@ -307,7 +304,7 @@ var SearchBar = React.createClass({
           autoCapitalize="none"
           autoCorrect={false}
           onChange={this.props.onSearchChange}
-          placeholder="Search a movie..."
+          placeholder="Search posts..."
           onFocus={this.props.onFocus}
           style={styles.searchBarInput}
         />
